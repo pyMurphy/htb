@@ -1,6 +1,6 @@
 import requests, base64, argparse, sys
 
-parser = argparse.ArgumentParser(description='Program to get an RCE shell interface on the Carrier box. Made by 0xMurphy')
+parser = argparse.ArgumentParser(description='Reverse TCP Shell. Made by 0xMurphy')
 parser.add_argument('rhost', help='Remote host IP')
 args = parser.parse_args()
 
