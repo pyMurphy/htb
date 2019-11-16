@@ -5,7 +5,7 @@ parser.add_argument('rhost', help='Remote host IP')
 args = parser.parse_args()
 
 USERNAME='admin'
-PASSWORD=''	# Removed because box is still active
+PASSWORD='NET_45JDX23'	# Added because box is now inactive
 cookie='authBy0xMurphy'
 
 def payload(t):
